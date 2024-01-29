@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pan Registration Form</title>
+	<style>
+		.row.mb-3{
+			background-color: oldlace;
+			border-radius: 5px ;
+		}
+		#text{
+			font-weight: bold;
+		}
+		input{
+			padding-left: 0;
+		}
+	</style>
+	<script src="D:/CarTrade Internship/Vue Js/vue.global.js"></script>
+	<link rel="stylesheet" href="D:/CarTrade Internship/bootstrap-5.3.2-dist/css/bootstrap.min.css">
+	<script src="D:/CarTrade Internship/bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div id="app" >
+		<div class="row" style="background-color: orange;">
+			<div class="row ps-5">
+				<div class="col-3">
+					<h4 align="right">Tax Information Network</h4>
+			    </div>
+			</div>
+			<div class="row ps-5">
+				<div class="col-3">
+					<h6 align="right">of Income Tax Department</h6>
+			    </div>
+			</div>
+		</div>
+		<h1 align="center" class="p-3 mb-4">Online PAN Application</h1>
+	<!--Container starts-->
+		<div align="center" class="container" style="border: 3px normal; border-radius: 5px ; box-shadow: 5px 5px lightgrey;">
+			<!--Application Details Starts-->
+			<div align="left" id="text" style="margin-bottom: 10px; font-size: large;">Application Details</div>
+			<div align="left " class="row mb-3" >
+				<div class="p-3 col-6">
+						<label>Application Type:</label>
+						<span class="ps-3" >
+							<select v-model="app_type" v-on:change="hello" required>
+								<option value="" disabled selected hidden>-select-</option>
+								<option>New PAN - Indian Citizen (Form 49A)</option>
+								<option>New PAN - Foreign Citizen (Form 49AA)</option>
+					        </select>
+						</span>
+				</div>
+				<div class="p-3 col-6">
+						<label>Category:</label>
+						<span class="ps-3" >
+							<select v-model="category" required>
+								<option value="" disabled selected hidden>-select-</option>
+								<option>Individual</option>
+								<option>Body of Individuals</option>
+								<option>Association of Persons</option>
+								<option>Company</option>
+								<option>Trust</option>
+								<option>Limited Liability Partnership</option>
+							</select>
+						</span>
+				</div>
+			</div>
+			<!--Application Details Ends-->
+
+			<!--Applicant Details Starts-->
+			 <div align="left" id="text" style="margin-bottom: 10px; font-size: large;">Applicant Details</div>
+			 <div align="left" class="row mb-3" >
+				<div class="row">
+					<div class="p-3 col-2">Title:
+						<select style="width: 27%" v-model="title" required>
+							<option>-select-</option>
+							<option>Mr</option>
+							<option>Ms</option>
+							<option>Mrs</option>
+						</select>
+					</div>
+					<div class="p-3 col-3">First Name:
+						<input type="text" v-model="name.fname"  v-bind:style="name.fname_style" v-on:keyup="validate_fname" required>
+					</div>
+					<div class=" p-3 col-3">Middle Name:
+						<input type="text" v-model="name.mname" v-bind:style="name.mname_style" v-on:keyup="validate_mname">
+					</div>
+					<div class="p-3 col-3">Last Name:
+						<input type="text" v-model="name.lname" v-bind:style="name.lname_style" v-on:keyup="validate_lname" required>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<label>Name to be printed on PAN Card:</label>
+					<input type="text" v-model="name.name_on_pan" required>
+					</div>
+				</div>
+			</div>
+ 
+			<div align="left" class="row mb-3" >
+				<div class="p-3 col-6">
+						<label>Gender:
+						<input type="radio" name="g"  v-model="gender" style="margin-left: 75px;">
+						<label >Male</label>
+						<input type="radio" name="g" v-model="gender" style="margin-left: 75px;">
+						<label >Female</label>
+						<input type="radio" name="g" v-model="gender" style="margin-left: 75px;">
+						<label >Transgender</label></label>
+				</div>
+				<div class="p-3 col-3">
+						<label>Date of Birth:</label>
+						<span class="ps-3"><input type="Date" v-model="dob"></span> 
+				</div>
+			</div>
+            <div align="left" id="text" style="margin-bottom: 10px; font-size: large;">Contact Details
+            </div>
+			<div align="left" class="row mb-3">
+				<div class="p-3 col">
+					<label>Mobile Number:</label>
+					<input type="text" value="" v-model="contact" v-on:keyup="validate_contact">
+				</div>
+				<div class="p-3 col">
+					<label>Email:</label>
+					<input type="text" value="" v-model="email" v-on:keyup="validate_email">
+				</div>
+			</div>
+			<!--Applicant Details Ends-->
+			<!--Parent Details Starts-->
+			<div align="left" id="text" style="margin-bottom: 10px; font-size: large;">Details of Parents</div>
+			<div align="left" class="row mb-3">
+				<div class="row">
+					<div class="p-3 col-2">Father's Name</div>
+					<div class="p-3 col-3">First Name:
+						<input type="text" v-model="father.fname" v-bind:style="father.fname_style" v-on:keyup="validate_fa_fname">
+					</div>
+					<div class=" p-3 col-3">Middle Name:
+						<input type="text" v-model="father.mname" v-bind:style="father.mname_style" v-on:keyup="validate_fa_mname">
+					</div>
+					<div class="p-3 col-3">Last Name:
+						<input type="text" v-model="father.lname" v-bind:style="father.lname_style" v-on:keyup="validate_fa_lname">
+					</div>
+				</div>
+				<div class="row">
+					<div class="p-3 col-2">Mother's Name</div>
+					<div class="p-3 col-3">First Name:
+						<input type="text" v-model="mother.fname" v-bind:style="mother.fname_style" v-on:keyup="validate_mo_fname">
+					</div>
+					<div class=" p-3 col-3">Middle Name:
+						<input type="text" v-model="mother.mname" v-bind:style="mother.mname_style" v-on:keyup="validate_mo_mname">
+					</div>
+					<div class="p-3 col-3">Last Name:
+						<input type="text" v-model="mother.lname" v-bind:style="mother.lname_style" v-on:keyup="validate_mo_lname">
+					</div>
+				</div>
+				
+			</div>
+			<!--Parent Details Ends-->
+
+			<!--Address Starts-->
+			<div align="left" id="text" style="margin-bottom: 10px; font-size: large;">Address</div>
+				<div align="left" class="row mb-3">
+					<div class="p-3 col">
+						<label>State:</label>
+						<select v-model="state" style="width:27%;">
+							<option v-for="s,i in states">{{i}}</option>
+						</select>
+					</div>
+					<div class="p-3 col">
+						<label>City:</label>
+						<select v-model="city" style="width:27%;">
+							<option v-for="k in states[state]">{{k}}</option>
+						</select>
+					</div>
+					
+				</div>
+
+				<div align="left" class="row mb-3">
+					<div class="p-3 col">
+						<label>District:</label>
+						<input type="text" value="" v-model="dist" >
+					</div>
+					<div class="p-3 col">
+						<label>Town/Village:</label>
+						<input type="text" value="" v-model="town" >
+					</div>
+					<div class="p-3 col">
+						<label>Pincode:</label>
+						<input type="text" value="" v-model="town" >
+					</div>
+				</div>
+
+				<div align="left" class="row mb-3">
+					<div class="p-3 col">
+						<label>Area/Landmark: </label>
+						<input type="text" value="" v-model="dist" >
+					</div>
+					<div class="p-3 col">
+						<label>Street: </label>
+						<input type="text" value="" v-model="town" >
+					</div>
+					<div class="p-3 col">
+						<label>House No: </label>
+						<input type="text" value="" v-model="town" >
+					</div>
+					
+				</div>
+				<!--Address Ends-->
+
+		</div>
+		
+	</div>
+
+	<script>
+		var ap=Vue.createApp({
+			data: function(){
+				return{
+					app_type:"",
+					category:"",
+					title:"",
+					name:{
+						name_on_pan:"",
+						fname:"",
+						mname:"",
+						lname:"",
+						fname_style:"",
+						mname_style:"",
+						lname_style:"",
+						fullname:this.fname+this.mname+this.lname,
+					},
+					father:{
+						fname:"",
+						mname:"",
+						lname:"",
+						fname_style:"",
+						mname_style:"",
+						lname_style:""
+					},
+					mother:{
+						fname:"",
+						mname:"",
+						lname:"",
+						fname_style:"",
+						mname_style:"",
+						lname_style:""
+					},
+					gender:"",
+                    dob:"",
+                    contact:"",
+                    email:"",
+                    city:"",
+                    state:"",
+                    states:{
+  "Andaman and Nicobar Islands": [
+    "Port Blair"
+  ],
+  "Haryana": [
+    "Faridabad",
+    "Gurgaon",
+    "Hisar",
+    "Rohtak",
+    "Panipat",
+    "Karnal",
+    "Sonipat",
+    "Yamunanagar",
+    "Panchkula",
+    "Bhiwani",
+    "Bahadurgarh",
+    "Jind",
+    "Sirsa",
+    "Thanesar",
+    "Kaithal",
+    "Palwal",
+    "Rewari",
+    "Hansi",
+    "Narnaul",
+    "Fatehabad",
+    "Gohana",
+    "Tohana",
+    "Narwana",
+    "Mandi Dabwali",
+    "Charkhi Dadri",
+    "Shahbad",
+    "Pehowa",
+    "Samalkha",
+    "Pinjore",
+    "Ladwa",
+    "Sohna",
+    "Safidon",
+    "Taraori",
+    "Mahendragarh",
+    "Ratia",
+    "Rania",
+    "Sarsod"
+  ],
+  "Tamil Nadu": [
+    "Chennai",
+    "Coimbatore",
+    "Madurai",
+    "Tiruchirappalli",
+    "Salem",
+    "Tirunelveli",
+    "Tiruppur",
+    "Ranipet",
+    "Nagercoil",
+    "Thanjavur",
+    "Vellore",
+    "Kancheepuram",
+    "Erode",
+    "Tiruvannamalai",
+    "Pollachi",
+    "Rajapalayam",
+    "Sivakasi",
+    "Pudukkottai",
+    "Neyveli (TS)",
+    "Nagapattinam",
+    "Viluppuram",
+    "Tiruchengode",
+    "Vaniyambadi",
+    "Theni Allinagaram",
+    "Udhagamandalam",
+    "Aruppukkottai",
+    "Paramakudi",
+    "Arakkonam",
+    "Virudhachalam",
+    "Srivilliputhur",
+    "Tindivanam",
+    "Virudhunagar",
+    "Karur",
+    "Valparai",
+    "Sankarankovil",
+    "Tenkasi",
+    "Palani",
+    "Pattukkottai",
+    "Tirupathur",
+    "Ramanathapuram",
+    "Udumalaipettai",
+    "Gobichettipalayam",
+    "Thiruvarur",
+    "Thiruvallur",
+    "Panruti",
+    "Namakkal",
+    "Thirumangalam",
+    "Vikramasingapuram",
+    "Nellikuppam",
+    "Rasipuram",
+    "Tiruttani",
+    "Nandivaram-Guduvancheri",
+    "Periyakulam",
+    "Pernampattu",
+    "Vellakoil",
+    "Sivaganga",
+    "Vadalur",
+    "Rameshwaram",
+    "Tiruvethipuram",
+    "Perambalur",
+    "Usilampatti",
+    "Vedaranyam",
+    "Sathyamangalam",
+    "Puliyankudi",
+    "Nanjikottai",
+    "Thuraiyur",
+    "Sirkali",
+    "Tiruchendur",
+    "Periyasemur",
+    "Sattur",
+    "Vandavasi",
+    "Tharamangalam",
+    "Tirukkoyilur",
+    "Oddanchatram",
+    "Palladam",
+    "Vadakkuvalliyur",
+    "Tirukalukundram",
+    "Uthamapalayam",
+    "Surandai",
+    "Sankari",
+    "Shenkottai",
+    "Vadipatti",
+    "Sholingur",
+    "Tirupathur",
+    "Manachanallur",
+    "Viswanatham",
+    "Polur",
+    "Panagudi",
+    "Uthiramerur",
+    "Thiruthuraipoondi",
+    "Pallapatti",
+    "Ponneri",
+    "Lalgudi",
+    "Natham",
+    "Unnamalaikadai",
+    "P.N.Patti",
+    "Tharangambadi",
+    "Tittakudi",
+    "Pacode",
+    "O' Valley",
+    "Suriyampalayam",
+    "Sholavandan",
+    "Thammampatti",
+    "Namagiripettai",
+    "Peravurani",
+    "Parangipettai",
+    "Pudupattinam",
+    "Pallikonda",
+    "Sivagiri",
+    "Punjaipugalur",
+    "Padmanabhapuram",
+    "Thirupuvanam"
+  ],
+  "Madhya Pradesh": [
+    "Indore",
+    "Bhopal",
+    "Jabalpur",
+    "Gwalior",
+    "Ujjain",
+    "Sagar",
+    "Ratlam",
+    "Satna",
+    "Murwara (Katni)",
+    "Morena",
+    "Singrauli",
+    "Rewa",
+    "Vidisha",
+    "Ganjbasoda",
+    "Shivpuri",
+    "Mandsaur",
+    "Neemuch",
+    "Nagda",
+    "Itarsi",
+    "Sarni",
+    "Sehore",
+    "Mhow Cantonment",
+    "Seoni",
+    "Balaghat",
+    "Ashok Nagar",
+    "Tikamgarh",
+    "Shahdol",
+    "Pithampur",
+    "Alirajpur",
+    "Mandla",
+    "Sheopur",
+    "Shajapur",
+    "Panna",
+    "Raghogarh-Vijaypur",
+    "Sendhwa",
+    "Sidhi",
+    "Pipariya",
+    "Shujalpur",
+    "Sironj",
+    "Pandhurna",
+    "Nowgong",
+    "Mandideep",
+    "Sihora",
+    "Raisen",
+    "Lahar",
+    "Maihar",
+    "Sanawad",
+    "Sabalgarh",
+    "Umaria",
+    "Porsa",
+    "Narsinghgarh",
+    "Malaj Khand",
+    "Sarangpur",
+    "Mundi",
+    "Nepanagar",
+    "Pasan",
+    "Mahidpur",
+    "Seoni-Malwa",
+    "Rehli",
+    "Manawar",
+    "Rahatgarh",
+    "Panagar",
+    "Wara Seoni",
+    "Tarana",
+    "Sausar",
+    "Rajgarh",
+    "Niwari",
+    "Mauganj",
+    "Manasa",
+    "Nainpur",
+    "Prithvipur",
+    "Sohagpur",
+    "Nowrozabad (Khodargama)",
+    "Shamgarh",
+    "Maharajpur",
+    "Multai",
+    "Pali",
+    "Pachore",
+    "Rau",
+    "Mhowgaon",
+    "Vijaypur",
+    "Narsinghgarh"
+  ],
+  "Jharkhand": [
+    "Dhanbad",
+    "Ranchi",
+    "Jamshedpur",
+    "Bokaro Steel City",
+    "Deoghar",
+    "Phusro",
+    "Adityapur",
+    "Hazaribag",
+    "Giridih",
+    "Ramgarh",
+    "Jhumri Tilaiya",
+    "Saunda",
+    "Sahibganj",
+    "Medininagar (Daltonganj)",
+    "Chaibasa",
+    "Chatra",
+    "Gumia",
+    "Dumka",
+    "Madhupur",
+    "Chirkunda",
+    "Pakaur",
+    "Simdega",
+    "Musabani",
+    "Mihijam",
+    "Patratu",
+    "Lohardaga",
+    "Tenu dam-cum-Kathhara"
+  ],
+  "Mizoram": [
+    "Aizawl",
+    "Lunglei",
+    "Saiha"
+  ],
+  "Nagaland": [
+    "Dimapur",
+    "Kohima",
+    "Zunheboto",
+    "Tuensang",
+    "Wokha",
+    "Mokokchung"
+  ],
+  "Himachal Pradesh": [
+    "Shimla",
+    "Mandi",
+    "Solan",
+    "Nahan",
+    "Sundarnagar",
+    "Palampur",
+    "Kullu"
+  ],
+  "Tripura": [
+    "Agartala",
+    "Udaipur",
+    "Dharmanagar",
+    "Pratapgarh",
+    "Kailasahar",
+    "Belonia",
+    "Khowai"
+  ],
+  "Andhra Pradesh": [
+    "Visakhapatnam",
+    "Vijayawada",
+    "Guntur",
+    "Nellore",
+    "Kurnool",
+    "Rajahmundry",
+    "Kakinada",
+    "Tirupati",
+    "Anantapur",
+    "Kadapa",
+    "Vizianagaram",
+    "Eluru",
+    "Ongole",
+    "Nandyal",
+    "Machilipatnam",
+    "Adoni",
+    "Tenali",
+    "Chittoor",
+    "Hindupur",
+    "Proddatur",
+    "Bhimavaram",
+    "Madanapalle",
+    "Guntakal",
+    "Dharmavaram",
+    "Gudivada",
+    "Srikakulam",
+    "Narasaraopet",
+    "Rajampet",
+    "Tadpatri",
+    "Tadepalligudem",
+    "Chilakaluripet",
+    "Yemmiganur",
+    "Kadiri",
+    "Chirala",
+    "Anakapalle",
+    "Kavali",
+    "Palacole",
+    "Sullurpeta",
+    "Tanuku",
+    "Rayachoti",
+    "Srikalahasti",
+    "Bapatla",
+    "Naidupet",
+    "Nagari",
+    "Gudur",
+    "Vinukonda",
+    "Narasapuram",
+    "Nuzvid",
+    "Markapur",
+    "Ponnur",
+    "Kandukur",
+    "Bobbili",
+    "Rayadurg",
+    "Samalkot",
+    "Jaggaiahpet",
+    "Tuni",
+    "Amalapuram",
+    "Bheemunipatnam",
+    "Venkatagiri",
+    "Sattenapalle",
+    "Pithapuram",
+    "Palasa Kasibugga",
+    "Parvathipuram",
+    "Macherla",
+    "Gooty",
+    "Salur",
+    "Mandapeta",
+    "Jammalamadugu",
+    "Peddapuram",
+    "Punganur",
+    "Nidadavole",
+    "Repalle",
+    "Ramachandrapuram",
+    "Kovvur",
+    "Tiruvuru",
+    "Uravakonda",
+    "Narsipatnam",
+    "Yerraguntla",
+    "Pedana",
+    "Puttur",
+    "Renigunta",
+    "Rajam",
+    "Srisailam Project (Right Flank Colony) Township"
+  ],
+  "Punjab": [
+    "Ludhiana",
+    "Patiala",
+    "Amritsar",
+    "Jalandhar",
+    "Bathinda",
+    "Pathankot",
+    "Hoshiarpur",
+    "Batala",
+    "Moga",
+    "Malerkotla",
+    "Khanna",
+    "Mohali",
+    "Barnala",
+    "Firozpur",
+    "Phagwara",
+    "Kapurthala",
+    "Zirakpur",
+    "Kot Kapura",
+    "Faridkot",
+    "Muktsar",
+    "Rajpura",
+    "Sangrur",
+    "Fazilka",
+    "Gurdaspur",
+    "Kharar",
+    "Gobindgarh",
+    "Mansa",
+    "Malout",
+    "Nabha",
+    "Tarn Taran",
+    "Jagraon",
+    "Sunam",
+    "Dhuri",
+    "Firozpur Cantt.",
+    "Sirhind Fatehgarh Sahib",
+    "Rupnagar",
+    "Jalandhar Cantt.",
+    "Samana",
+    "Nawanshahr",
+    "Rampura Phul",
+    "Nangal",
+    "Nakodar",
+    "Zira",
+    "Patti",
+    "Raikot",
+    "Longowal",
+    "Urmar Tanda",
+    "Morinda, India",
+    "Phillaur",
+    "Pattran",
+    "Qadian",
+    "Sujanpur",
+    "Mukerian",
+    "Talwara"
+  ],
+  "Chandigarh": [
+    "Chandigarh"
+  ],
+  "Rajasthan": [
+    "Jaipur",
+    "Jodhpur",
+    "Bikaner",
+    "Udaipur",
+    "Ajmer",
+    "Bhilwara",
+    "Alwar",
+    "Bharatpur",
+    "Pali",
+    "Barmer",
+    "Sikar",
+    "Tonk",
+    "Sadulpur",
+    "Sawai Madhopur",
+    "Nagaur",
+    "Makrana",
+    "Sujangarh",
+    "Sardarshahar",
+    "Ladnu",
+    "Ratangarh",
+    "Nokha",
+    "Nimbahera",
+    "Suratgarh",
+    "Rajsamand",
+    "Lachhmangarh",
+    "Rajgarh (Churu)",
+    "Nasirabad",
+    "Nohar",
+    "Phalodi",
+    "Nathdwara",
+    "Pilani",
+    "Merta City",
+    "Sojat",
+    "Neem-Ka-Thana",
+    "Sirohi",
+    "Pratapgarh",
+    "Rawatbhata",
+    "Sangaria",
+    "Lalsot",
+    "Pilibanga",
+    "Pipar City",
+    "Taranagar",
+    "Vijainagar, Ajmer",
+    "Sumerpur",
+    "Sagwara",
+    "Ramganj Mandi",
+    "Lakheri",
+    "Udaipurwati",
+    "Losal",
+    "Sri Madhopur",
+    "Ramngarh",
+    "Rawatsar",
+    "Rajakhera",
+    "Shahpura",
+    "Shahpura",
+    "Raisinghnagar",
+    "Malpura",
+    "Nadbai",
+    "Sanchore",
+    "Nagar",
+    "Rajgarh (Alwar)",
+    "Sheoganj",
+    "Sadri",
+    "Todaraisingh",
+    "Todabhim",
+    "Reengus",
+    "Rajaldesar",
+    "Sadulshahar",
+    "Sambhar",
+    "Prantij",
+    "Mount Abu",
+    "Mangrol",
+    "Phulera",
+    "Mandawa",
+    "Pindwara",
+    "Mandalgarh",
+    "Takhatgarh"
+  ],
+  "Assam": [
+    "Guwahati",
+    "Silchar",
+    "Dibrugarh",
+    "Nagaon",
+    "Tinsukia",
+    "Jorhat",
+    "Bongaigaon City",
+    "Dhubri",
+    "Diphu",
+    "North Lakhimpur",
+    "Tezpur",
+    "Karimganj",
+    "Sibsagar",
+    "Goalpara",
+    "Barpeta",
+    "Lanka",
+    "Lumding",
+    "Mankachar",
+    "Nalbari",
+    "Rangia",
+    "Margherita",
+    "Mangaldoi",
+    "Silapathar",
+    "Mariani",
+    "Marigaon"
+  ],
+  "Odisha": [
+    "Bhubaneswar",
+    "Cuttack",
+    "Raurkela",
+    "Brahmapur",
+    "Sambalpur",
+    "Puri",
+    "Baleshwar Town",
+    "Baripada Town",
+    "Bhadrak",
+    "Balangir",
+    "Jharsuguda",
+    "Bargarh",
+    "Paradip",
+    "Bhawanipatna",
+    "Dhenkanal",
+    "Barbil",
+    "Kendujhar",
+    "Sunabeda",
+    "Rayagada",
+    "Jatani",
+    "Byasanagar",
+    "Kendrapara",
+    "Rajagangapur",
+    "Parlakhemundi",
+    "Talcher",
+    "Sundargarh",
+    "Phulabani",
+    "Pattamundai",
+    "Titlagarh",
+    "Nabarangapur",
+    "Soro",
+    "Malkangiri",
+    "Rairangpur",
+    "Tarbha"
+  ],
+  "Chhattisgarh": [
+    "Raipur",
+    "Bhilai Nagar",
+    "Korba",
+    "Bilaspur",
+    "Durg",
+    "Rajnandgaon",
+    "Jagdalpur",
+    "Raigarh",
+    "Ambikapur",
+    "Mahasamund",
+    "Dhamtari",
+    "Chirmiri",
+    "Bhatapara",
+    "Dalli-Rajhara",
+    "Naila Janjgir",
+    "Tilda Newra",
+    "Mungeli",
+    "Manendragarh",
+    "Sakti"
+  ],
+  "Jammu and Kashmir": [
+    "Srinagar",
+    "Jammu",
+    "Baramula",
+    "Anantnag",
+    "Sopore",
+    "KathUrban Agglomeration",
+    "Rajauri",
+    "Punch",
+    "Udhampur"
+  ],
+  "Karnataka": [
+    "Bengaluru",
+    "Hubli-Dharwad",
+    "Belagavi",
+    "Mangaluru",
+    "Davanagere",
+    "Ballari",
+    "Mysore",
+    "Tumkur",
+    "Shivamogga",
+    "Raayachuru",
+    "Robertson Pet",
+    "Kolar",
+    "Mandya",
+    "Udupi",
+    "Chikkamagaluru",
+    "Karwar",
+    "Ranebennuru",
+    "Ranibennur",
+    "Ramanagaram",
+    "Gokak",
+    "Yadgir",
+    "Rabkavi Banhatti",
+    "Shahabad",
+    "Sirsi",
+    "Sindhnur",
+    "Tiptur",
+    "Arsikere",
+    "Nanjangud",
+    "Sagara",
+    "Sira",
+    "Puttur",
+    "Athni",
+    "Mulbagal",
+    "Surapura",
+    "Siruguppa",
+    "Mudhol",
+    "Sidlaghatta",
+    "Shahpur",
+    "Saundatti-Yellamma",
+    "Wadi",
+    "Manvi",
+    "Nelamangala",
+    "Lakshmeshwar",
+    "Ramdurg",
+    "Nargund",
+    "Tarikere",
+    "Malavalli",
+    "Savanur",
+    "Lingsugur",
+    "Vijayapura",
+    "Sankeshwara",
+    "Madikeri",
+    "Talikota",
+    "Sedam",
+    "Shikaripur",
+    "Mahalingapura",
+    "Mudalagi",
+    "Muddebihal",
+    "Pavagada",
+    "Malur",
+    "Sindhagi",
+    "Sanduru",
+    "Afzalpur",
+    "Maddur",
+    "Madhugiri",
+    "Tekkalakote",
+    "Terdal",
+    "Mudabidri",
+    "Magadi",
+    "Navalgund",
+    "Shiggaon",
+    "Shrirangapattana",
+    "Sindagi",
+    "Sakaleshapura",
+    "Srinivaspur",
+    "Ron",
+    "Mundargi",
+    "Sadalagi",
+    "Piriyapatna",
+    "Adyar"
+  ],
+  "Manipur": [
+    "Imphal",
+    "Thoubal",
+    "Lilong",
+    "Mayang Imphal"
+  ],
+  "Kerala": [
+    "Thiruvananthapuram",
+    "Kochi",
+    "Kozhikode",
+    "Kollam",
+    "Thrissur",
+    "Palakkad",
+    "Alappuzha",
+    "Malappuram",
+    "Ponnani",
+    "Vatakara",
+    "Kanhangad",
+    "Taliparamba",
+    "Koyilandy",
+    "Neyyattinkara",
+    "Kayamkulam",
+    "Nedumangad",
+    "Kannur",
+    "Tirur",
+    "Kottayam",
+    "Kasaragod",
+    "Kunnamkulam",
+    "Ottappalam",
+    "Thiruvalla",
+    "Thodupuzha",
+    "Chalakudy",
+    "Changanassery",
+    "Punalur",
+    "Nilambur",
+    "Cherthala",
+    "Perinthalmanna",
+    "Mattannur",
+    "Shoranur",
+    "Varkala",
+    "Paravoor",
+    "Pathanamthitta",
+    "Peringathur",
+    "Attingal",
+    "Kodungallur",
+    "Pappinisseri",
+    "Chittur-Thathamangalam",
+    "Muvattupuzha",
+    "Adoor",
+    "Mavelikkara",
+    "Mavoor",
+    "Perumbavoor",
+    "Vaikom",
+    "Palai",
+    "Panniyannur",
+    "Guruvayoor",
+    "Puthuppally",
+    "Panamattom"
+  ],
+  "Delhi": [
+    "Delhi",
+    "New Delhi"
+  ],
+  "Dadra and Nagar Haveli": [
+    "Silvassa"
+  ],
+  "Puducherry": [
+    "Pondicherry",
+    "Karaikal",
+    "Yanam",
+    "Mahe"
+  ],
+  "Uttarakhand": [
+    "Dehradun",
+    "Hardwar",
+    "Haldwani-cum-Kathgodam",
+    "Srinagar",
+    "Kashipur",
+    "Roorkee",
+    "Rudrapur",
+    "Rishikesh",
+    "Ramnagar",
+    "Pithoragarh",
+    "Manglaur",
+    "Nainital",
+    "Mussoorie",
+    "Tehri",
+    "Pauri",
+    "Nagla",
+    "Sitarganj",
+    "Bageshwar"
+  ],
+  "Uttar Pradesh": [
+    "Lucknow",
+    "Kanpur",
+    "Firozabad",
+    "Agra",
+    "Meerut",
+    "Varanasi",
+    "Allahabad",
+    "Amroha",
+    "Moradabad",
+    "Aligarh",
+    "Saharanpur",
+    "Noida",
+    "Loni",
+    "Jhansi",
+    "Shahjahanpur",
+    "Rampur",
+    "Modinagar",
+    "Hapur",
+    "Etawah",
+    "Sambhal",
+    "Orai",
+    "Bahraich",
+    "Unnao",
+    "Rae Bareli",
+    "Lakhimpur",
+    "Sitapur",
+    "Lalitpur",
+    "Pilibhit",
+    "Chandausi",
+    "Hardoi ",
+    "Azamgarh",
+    "Khair",
+    "Sultanpur",
+    "Tanda",
+    "Nagina",
+    "Shamli",
+    "Najibabad",
+    "Shikohabad",
+    "Sikandrabad",
+    "Shahabad, Hardoi",
+    "Pilkhuwa",
+    "Renukoot",
+    "Vrindavan",
+    "Ujhani",
+    "Laharpur",
+    "Tilhar",
+    "Sahaswan",
+    "Rath",
+    "Sherkot",
+    "Kalpi",
+    "Tundla",
+    "Sandila",
+    "Nanpara",
+    "Sardhana",
+    "Nehtaur",
+    "Seohara",
+    "Padrauna",
+    "Mathura",
+    "Thakurdwara",
+    "Nawabganj",
+    "Siana",
+    "Noorpur",
+    "Sikandra Rao",
+    "Puranpur",
+    "Rudauli",
+    "Thana Bhawan",
+    "Palia Kalan",
+    "Zaidpur",
+    "Nautanwa",
+    "Zamania",
+    "Shikarpur, Bulandshahr",
+    "Naugawan Sadat",
+    "Fatehpur Sikri",
+    "Shahabad, Rampur",
+    "Robertsganj",
+    "Utraula",
+    "Sadabad",
+    "Rasra",
+    "Lar",
+    "Lal Gopalganj Nindaura",
+    "Sirsaganj",
+    "Pihani",
+    "Shamsabad, Agra",
+    "Rudrapur",
+    "Soron",
+    "SUrban Agglomerationr",
+    "Samdhan",
+    "Sahjanwa",
+    "Rampur Maniharan",
+    "Sumerpur",
+    "Shahganj",
+    "Tulsipur",
+    "Tirwaganj",
+    "PurqUrban Agglomerationzi",
+    "Shamsabad, Farrukhabad",
+    "Warhapur",
+    "Powayan",
+    "Sandi",
+    "Achhnera",
+    "Naraura",
+    "Nakur",
+    "Sahaspur",
+    "Safipur",
+    "Reoti",
+    "Sikanderpur",
+    "Saidpur",
+    "Sirsi",
+    "Purwa",
+    "Parasi",
+    "Lalganj",
+    "Phulpur",
+    "Shishgarh",
+    "Sahawar",
+    "Samthar",
+    "Pukhrayan",
+    "Obra",
+    "Niwai",
+    "Mirzapur"
+  ],
+  "Bihar": [
+    "Patna",
+    "Gaya",
+    "Bhagalpur",
+    "Muzaffarpur",
+    "Darbhanga",
+    "Arrah",
+    "Begusarai",
+    "Chhapra",
+    "Katihar",
+    "Munger",
+    "Purnia",
+    "Saharsa",
+    "Sasaram",
+    "Hajipur",
+    "Dehri-on-Sone",
+    "Bettiah",
+    "Motihari",
+    "Bagaha",
+    "Siwan",
+    "Kishanganj",
+    "Jamalpur",
+    "Buxar",
+    "Jehanabad",
+    "Aurangabad",
+    "Lakhisarai",
+    "Nawada",
+    "Jamui",
+    "Sitamarhi",
+    "Araria",
+    "Gopalganj",
+    "Madhubani",
+    "Masaurhi",
+    "Samastipur",
+    "Mokameh",
+    "Supaul",
+    "Dumraon",
+    "Arwal",
+    "Forbesganj",
+    "BhabUrban Agglomeration",
+    "Narkatiaganj",
+    "Naugachhia",
+    "Madhepura",
+    "Sheikhpura",
+    "Sultanganj",
+    "Raxaul Bazar",
+    "Ramnagar",
+    "Mahnar Bazar",
+    "Warisaliganj",
+    "Revelganj",
+    "Rajgir",
+    "Sonepur",
+    "Sherghati",
+    "Sugauli",
+    "Makhdumpur",
+    "Maner",
+    "Rosera",
+    "Nokha",
+    "Piro",
+    "Rafiganj",
+    "Marhaura",
+    "Mirganj",
+    "Lalganj",
+    "Murliganj",
+    "Motipur",
+    "Manihari",
+    "Sheohar",
+    "Maharajganj",
+    "Silao",
+    "Barh",
+    "Asarganj"
+  ],
+  "Gujarat": [
+    "Ahmedabad",
+    "Surat",
+    "Vadodara",
+    "Rajkot",
+    "Bhavnagar",
+    "Jamnagar",
+    "Nadiad",
+    "Porbandar",
+    "Anand",
+    "Morvi",
+    "Mahesana",
+    "Bharuch",
+    "Vapi",
+    "Navsari",
+    "Veraval",
+    "Bhuj",
+    "Godhra",
+    "Palanpur",
+    "Valsad",
+    "Patan",
+    "Deesa",
+    "Amreli",
+    "Anjar",
+    "Dhoraji",
+    "Khambhat",
+    "Mahuva",
+    "Keshod",
+    "Wadhwan",
+    "Ankleshwar",
+    "Savarkundla",
+    "Kadi",
+    "Visnagar",
+    "Upleta",
+    "Una",
+    "Sidhpur",
+    "Unjha",
+    "Mangrol",
+    "Viramgam",
+    "Modasa",
+    "Palitana",
+    "Petlad",
+    "Kapadvanj",
+    "Sihor",
+    "Wankaner",
+    "Limbdi",
+    "Mandvi",
+    "Thangadh",
+    "Vyara",
+    "Padra",
+    "Lunawada",
+    "Rajpipla",
+    "Vapi",
+    "Umreth",
+    "Sanand",
+    "Rajula",
+    "Radhanpur",
+    "Mahemdabad",
+    "Ranavav",
+    "Tharad",
+    "Mansa",
+    "Umbergaon",
+    "Talaja",
+    "Vadnagar",
+    "Manavadar",
+    "Salaya",
+    "Vijapur",
+    "Pardi",
+    "Rapar",
+    "Songadh",
+    "Lathi",
+    "Adalaj",
+    "Chhapra",
+    "Gandhinagar"
+  ],
+  "Telangana": [
+    "Hyderabad",
+    "Warangal",
+    "Nizamabad",
+    "Karimnagar",
+    "Ramagundam",
+    "Khammam",
+    "Mahbubnagar",
+    "Mancherial",
+    "Adilabad",
+    "Suryapet",
+    "Jagtial",
+    "Miryalaguda",
+    "Nirmal",
+    "Kamareddy",
+    "Kothagudem",
+    "Bodhan",
+    "Palwancha",
+    "Mandamarri",
+    "Koratla",
+    "Sircilla",
+    "Tandur",
+    "Siddipet",
+    "Wanaparthy",
+    "Kagaznagar",
+    "Gadwal",
+    "Sangareddy",
+    "Bellampalle",
+    "Bhongir",
+    "Vikarabad",
+    "Jangaon",
+    "Bhadrachalam",
+    "Bhainsa",
+    "Farooqnagar",
+    "Medak",
+    "Narayanpet",
+    "Sadasivpet",
+    "Yellandu",
+    "Manuguru",
+    "Kyathampalle",
+    "Nagarkurnool"
+  ],
+  "Meghalaya": [
+    "Shillong",
+    "Tura",
+    "Nongstoin"
+  ],
+  "Himachal Praddesh": [
+    "Manali"
+  ],
+  "Arunachal Pradesh": [
+    "Naharlagun",
+    "Pasighat"
+  ],
+  "Maharashtra": [
+    "Mumbai",
+    "Pune",
+    "Nagpur",
+    "Thane",
+    "Nashik",
+    "Kalyan-Dombivali",
+    "Vasai-Virar",
+    "Solapur",
+    "Mira-Bhayandar",
+    "Bhiwandi",
+    "Amravati",
+    "Nanded-Waghala",
+    "Sangli",
+    "Malegaon",
+    "Akola",
+    "Latur",
+    "Dhule",
+    "Ahmednagar",
+    "Ichalkaranji",
+    "Parbhani",
+    "Panvel",
+    "Yavatmal",
+    "Achalpur",
+    "Osmanabad",
+    "Nandurbar",
+    "Satara",
+    "Wardha",
+    "Udgir",
+    "Aurangabad",
+    "Amalner",
+    "Akot",
+    "Pandharpur",
+    "Shrirampur",
+    "Parli",
+    "Washim",
+    "Ambejogai",
+    "Manmad",
+    "Ratnagiri",
+    "Uran Islampur",
+    "Pusad",
+    "Sangamner",
+    "Shirpur-Warwade",
+    "Malkapur",
+    "Wani",
+    "Lonavla",
+    "Talegaon Dabhade",
+    "Anjangaon",
+    "Umred",
+    "Palghar",
+    "Shegaon",
+    "Ozar",
+    "Phaltan",
+    "Yevla",
+    "Shahade",
+    "Vita",
+    "Umarkhed",
+    "Warora",
+    "Pachora",
+    "Tumsar",
+    "Manjlegaon",
+    "Sillod",
+    "Arvi",
+    "Nandura",
+    "Vaijapur",
+    "Wadgaon Road",
+    "Sailu",
+    "Murtijapur",
+    "Tasgaon",
+    "Mehkar",
+    "Yawal",
+    "Pulgaon",
+    "Nilanga",
+    "Wai",
+    "Umarga",
+    "Paithan",
+    "Rahuri",
+    "Nawapur",
+    "Tuljapur",
+    "Morshi",
+    "Purna",
+    "Satana",
+    "Pathri",
+    "Sinnar",
+    "Uchgaon",
+    "Uran",
+    "Pen",
+    "Karjat",
+    "Manwath",
+    "Partur",
+    "Sangole",
+    "Mangrulpir",
+    "Risod",
+    "Shirur",
+    "Savner",
+    "Sasvad",
+    "Pandharkaoda",
+    "Talode",
+    "Shrigonda",
+    "Shirdi",
+    "Raver",
+    "Mukhed",
+    "Rajura",
+    "Vadgaon Kasba",
+    "Tirora",
+    "Mahad",
+    "Lonar",
+    "Sawantwadi",
+    "Pathardi",
+    "Pauni",
+    "Ramtek",
+    "Mul",
+    "Soyagaon",
+    "Mangalvedhe",
+    "Narkhed",
+    "Shendurjana",
+    "Patur",
+    "Mhaswad",
+    "Loha",
+    "Nandgaon",
+    "Warud"
+  ],
+  "Goa": [
+    "Marmagao",
+    "Panaji",
+    "Margao",
+    "Mapusa"
+  ],
+  "West Bengal": [
+    "Kolkata",
+    "Siliguri",
+    "Asansol",
+    "Raghunathganj",
+    "Kharagpur",
+    "Naihati",
+    "English Bazar",
+    "Baharampur",
+    "Hugli-Chinsurah",
+    "Raiganj",
+    "Jalpaiguri",
+    "Santipur",
+    "Balurghat",
+    "Medinipur",
+    "Habra",
+    "Ranaghat",
+    "Bankura",
+    "Nabadwip",
+    "Darjiling",
+    "Purulia",
+    "Arambagh",
+    "Tamluk",
+    "AlipurdUrban Agglomerationr",
+    "Suri",
+    "Jhargram",
+    "Gangarampur",
+    "Rampurhat",
+    "Kalimpong",
+    "Sainthia",
+    "Taki",
+    "Murshidabad",
+    "Memari",
+    "Paschim Punropara",
+    "Tarakeswar",
+    "Sonamukhi",
+    "PandUrban Agglomeration",
+    "Mainaguri",
+    "Malda",
+    "Panchla",
+    "Raghunathpur",
+    "Mathabhanga",
+    "Monoharpur",
+    "Srirampore",
+    "Adra"
+  ]
+                    }
+                    
+				}
+			},
+			methods:{
+				validate_fname()
+				{
+					if(this.name.fname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.name.fname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.name.fname_style="border: 2px";
+						
+					}
+				},
+				validate_mname()
+				{
+					if(this.name.mname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.name.mname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.name.mname_style="border: 2px";
+					}
+				},
+				validate_lname()
+				{
+					if(this.name.lname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.name.lname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.name.lname_style="border: 2px ";
+					}
+				},
+				validate_fa_fname()
+				{
+					if(this.father.fname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.father.fname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.father.fname_style="border: 2px ";
+					}
+				},
+				validate_fa_mname()
+				{
+					if(this.father.mname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.father.mname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.father.mname_style="border: 2px ";
+					}
+				},
+				validate_fa_lname()
+				{
+					if(this.father.lname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.father.lname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.father.lname_style="border: 2px ";
+					}
+				},
+				validate_mo_fname()
+				{
+					if(this.mother.fname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.mother.fname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.mother.fname_style="border: 2px ";
+					}
+				},
+				validate_mo_mname()
+				{
+					if(this.mother.mname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.mother.mname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.mother.mname_style="border: 2px ";
+					}
+				},
+				validate_mo_lname()
+				{
+					if(this.mother.lname.match(/^[a-z\ ]{3,50}$/i) == null)
+					{
+						this.mother.lname_style="border: 2px red;border-radius:2px; box-shadow: 3px 3px 3px 2px red";
+					}
+					else{
+						this.mother.lname_style="border: 2px ";
+					}
+				},
+				hello(){
+					console.log(this.app_type);
+				}
+
+
+			}
+		}).mount('#app');
+	</script>
+</body>
+</html>

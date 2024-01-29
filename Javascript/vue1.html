@@ -1,0 +1,62 @@
+<html>
+<body>
+<script src="vue.global.js"></script>
+<div id="app" >
+	<ul>
+		<li v-for="v,i in cities" >{{ v }} <input type="button" value="X" v-on:click="del_city(i)" ><input type="button" value="edit" v-on:click="edit_city(i)"></li>
+	</ul>
+	<div>
+		<input type="text" v-model="new_city" style="outline:none;" v-bind:style="style_prop" placeholder="New City" v-on:keyup="validate_city" ><span v-if="city_valid">&check;</span><span v-if="city_valid==false">&#x292B;</span>
+	</div>
+	<div>{{ msg }}</div>
+	<input type="button" value="Add City" v-on:click="add_city">
+
+</div>
+<script>
+var app = Vue.createApp({
+	data: function(){
+		return {
+			city_style: "",
+			city_valid: false,
+			new_city: "",
+			cities: ["Kakinada", "Rajahmundry"],
+			msg: "",
+		};
+	},
+	mounted: function(){
+
+	},
+	methods: {
+		add_city: function(){
+			this.cities.push( this.new_city );
+			this.new_city = '';
+		},
+		del_city: function( vi ){
+			this.cities.splice( vi, 1);
+		},
+		validate_city: function(){
+			if( this.new_city.match(/^[a-z\ ]{5,25}$/i) == null ){
+				this.city_style = "border:1px solid red;";
+				this.city_valid = false;
+				this.msg = "Please enter city in alphabates only. no special chars allowed.";
+			}
+			else if(this.new_city.match() == null){
+				this.city_style = "border:1px solid red;";
+				this.city_valid = false;
+				this.msg = "Please enter city.";
+			}
+			else{
+				this.city_valid = true;
+				this.city_style = "border:1px solid blue;";
+				this.msg = "City OK";
+			}
+		},
+		edit_city: function(vi)
+		{
+               this.cities.splice(vi,1,"");
+		}
+	},
+}).mount("#app");
+</script>
+</body>
+</html>

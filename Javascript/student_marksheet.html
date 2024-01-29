@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="bootstrap-5.3.2-dist/css/bootstrap.min.css" >
+    <script src="bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <title>Student Marksheet</title>
+</head>
+<body style="font-family: 'Courier New', Courier, monospace;">
+    
+    <div  id="app">
+        <h3 class="p-1" align="center" style="font-family: 'Courier New', Courier, monospace;"><b>Student Marksheet List</b><h3></h3>
+        <div class="pe-4" align="right"><button class="btn btn-outline-dark btn-sm"  data-bs-toggle="modal" data-bs-target="#add_student_record">Add Record</button></div>
+        <table class="mt-2  table table-bordered table-striped table-hover pt-3" >
+            <thead class="table-dark">
+                <tr align="center">
+                    <th>SN0</th>
+                    <th>Roll Number</th>
+                    <th>Student Name</th>
+                    <th>Total Marks<span><small>(out of 700)</small></span></th>
+                    <th>Percentage</th>
+                    <th>Grade</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody align="center">
+                <tr v-for="rec,i in marklist">
+                    <td>{{i+1}}</td>
+                    <td>{{rec['roll_no']}}</td>
+                    <td>{{rec['name']}}</td>
+                    <td>{{rec['total']}}</td>
+                    <td>{{rec['percentage']}}</td>
+                    <td>{{rec['grade']}}</td>
+                    <td><button class="btn btn-light btn-sm"  data-bs-toggle="modal" data-bs-target="#edit_student_record" @click="edit(i)"><i style="font-size:18px" class="fa">&#xf044;</i></button></td>
+                    <td><button class="btn btn-light btn-sm" @click="del(i)"><i style="font-size:18px" class="fa">&#xf014;</i></button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--Add Record Popup-->
+            <div class="modal fade" id="add_student_record" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle"><b>Add Student Record</b></h5>
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <table class="table table-sm">
+                        <tr>
+                            <td>Roll No: <input type="text" style="outline: none;" v-bind:style="roll_style" v-model="add_record['roll_no']" v-on:keyup="validate_roll(0)"></td>
+                            <td>Name: <input type="text" id="name" style="outline:none;" v-bind:style="name_style"  v-model="add_record['name']" v-on:keyup="validate_name(0)"></td>
+                            
+                        </tr>
+                        <tr>
+                            <td>Total Marks: {{ add_record['total'] }}</td>
+                            <td>Percentage: {{ add_record['percentage'] }}%</td>
+                            <td>Grade: {{ add_record['grade'] }}</td>
+                        </tr>
+                      </table>
+                      <table class="table table-striped table-bordered table-hover table-sm">
+                        <tr align="center" class="table-dark">
+                            <td>SN0</td>
+                            <td>Subject</td>
+                            <td>Marks</td>
+                        </tr>
+                        <tr align="center" v-for="s,i in add_record['sub']">
+                            <td >{{i+1}}</td>
+                            <td>{{s['subject']}}</td>
+                            <td><input type="number" class="form-control form-control-sm" style="width:80px;" v-model="add_record['sub'][i]['marks']" v-on:keyup="calc_total()" min="0" max="100"></td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="add_save">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!--Edit Record Popup-->
+              <div class="modal fade" id="edit_student_record" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle"><b>Edit Student Record</b></h5>
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <table class="table table-sm">
+                        <tr>
+                            <td>Roll No: <input type="text" style="border: none;" v-bind:style="ep_roll_style" v-model="edit_record['roll_no']" v-on:keyup="validate_roll(1)"></td>
+                            <td>Name: <input type="text" id="name" style="border:none;" v-bind:style="ep_name_style"  v-model="edit_record['name']" v-on:keyup="validate_name(1)"></td>
+                            
+                        </tr>
+                        <tr>
+                            <td>Total Marks: {{ edit_record['total'] }}</td>
+                            <td>Percentage: {{ edit_record['percentage'] }}%</td>
+                            <td>Grade: {{ edit_record['grade'] }}</td>
+                        </tr>
+                      </table>
+                      <table class="table table-striped table-bordered table-hover table-sm">
+                        <tr align="center" class="table-dark">
+                            <td>SN0</td>
+                            <td>Subject</td>
+                            <td>Marks</td>
+                        </tr>
+                        <tr align="center" v-for="s,i in edit_record['sub']">
+                            <td >{{i+1}}</td>
+                            <td>{{s['subject']}}</td>
+                            <td><input type="number" value="edit_record['sub'][i]['marks']" class="form-control form-control-sm" style="width:80px;" v-model="edit_record['sub'][i]['marks']" v-on:keyup="edit_calc_total()" min="0" max="100"></td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-grey" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="edit_save">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+        <!--Closing of app div-->
+    </div>
+
+    <script src="vue.global.js"></script>
+    <script>
+        var app=Vue.createApp({
+            data(){
+                return{
+                    name_style:"",
+                    roll_style:"",
+                    ep_name_style:"",
+                    ep_roll_style:"",
+                    name_valid:false,
+                    roll_valid:false,
+                    edit_save_ind:-1,
+                    marklist:[{
+                        "roll_no":"201",
+                        "name":"Ram",
+                        "total":555,
+                        "percentage":79,
+                        "grade":"B",
+                        "sub":[{"subject":"Maths","marks":0},{"subject":"Physics","marks":0},{"subject":"Chemistry","marks":0},{"subject":"History","marks":0},{"subject":"Geography","marks":0},{"subject":"English","marks":0},{"subject":"Telugu","marks":0}]
+                    }],
+                    subjects:["Maths","Physics","Chemistry","History","Geography","English","Telugu"],
+                    add_record:{
+                        "roll_no":"",
+                        "name":"",
+                        "total":0,
+                        "percentage":0,
+                        "grade":"-",
+                        "sub":[{"subject":"Maths","marks":0},{"subject":"Physics","marks":0},{"subject":"Chemistry","marks":0},{"subject":"History","marks":0},{"subject":"Geography","marks":0},{"subject":"English","marks":0},{"subject":"Telugu","marks":0}]
+                    },
+                    edit_record:{
+                        "roll_no":"",
+                        "name":"",
+                        "total":0,
+                        "percentage":0,
+                        "grade":"-",
+                        "sub":[{"subject":"Maths","marks":0},{"subject":"Physics","marks":0},{"subject":"Chemistry","marks":0},{"subject":"History","marks":0},{"subject":"Geography","marks":0},{"subject":"English","marks":0},{"subject":"Telugu","marks":0}]
+                    },
+                }
+
+            },
+            mounted(){
+
+            },
+            methods:{
+               add_save: function()
+               {
+                pop = new bootstrap.Modal(document.getElementById('add_student_record') );
+                this.marklist.push(JSON.parse(JSON.stringify(this.add_record)));
+                this.add_record={
+                    "roll_no":"",
+                    "name":"",
+                    "total":0,
+                    "percentage":0,
+                    "grade":"-",
+                    "sub":[{"subject":"Maths","marks":0},{"subject":"Physics","marks":0},{"subject":"Chemistry","marks":0},{"subject":"History","marks":0},{"subject":"Geography","marks":0},{"subject":"English","marks":0},{"subject":"Telugu","marks":0}]
+                };
+                pop.hide();
+               },
+               calc_total()
+               {
+                    var n=0;
+                    for(var i=0;i<this.add_record['sub'].length;i++)
+                    {
+                        n=n+this.add_record['sub'][i]['marks'];
+                    }
+                    this.add_record['total']=n;
+                    this.add_record['percentage']=(n/700)*100;
+                    if(this.add_record['percentage']>85)
+                    {
+                        this.add_record['grade']="A";
+                    }
+                    else
+                    {
+                        if(this.add_record['percentage']>75)
+                        {
+                            this.add_record['grade']="B";
+                        }
+                        else{
+                            if(this.add_record['percentage']>65)
+                            {
+                                this.add_record['grade']="C";
+                             }
+                             else{
+                                if(this.add_record['percentage']>55)
+                                 {
+                                    this.add_record['grade']="D";
+                                 }
+                                 else{
+                                    if(this.add_record['percentage']>80)
+                                    {
+                                      this.add_record['grade']="E";
+                                    }
+                                 }
+                             }
+                        }
+                    }
+               },
+               edit_calc_total()
+               {
+                    var n=0;
+                    for(var i=0;i<this.edit_record['sub'].length;i++)
+                    {
+                        n=n+this.edit_record['sub'][i]['marks'];
+                    }
+                    this.edit_record['total']=n;
+                    this.edit_record['percentage']=(n/700)*100;
+                    if(this.edit_record['percentage']>85)
+                    {
+                        this.edit_record['grade']="A";
+                    }
+                    else
+                    {
+                        if(this.edit_record['percentage']>75)
+                        {
+                            this.edit_record['grade']="B";
+                        }
+                        else{
+                            if(this.edit_record['percentage']>65)
+                            {
+                                this.edit_record['grade']="C";
+                             }
+                             else{
+                                if(this.edit_record['percentage']>55)
+                                 {
+                                    this.edit_record['grade']="D";
+                                 }
+                                 else{
+                                    if(this.edit_record['percentage']>80)
+                                    {
+                                      this.edit_record['grade']="E";
+                                    }
+                                 }
+                             }
+                        }
+                    }
+               },
+               del(vi)
+               {
+                    this.marklist.splice(vi,1);
+               },
+               edit(vi)
+               {
+                    this.edit_record['roll_no']=this.marklist[vi]['roll_no'];
+                    this.edit_record['name']=this.marklist[vi]['name'];
+                    this.edit_record['total']=this.marklist[vi]['total'];
+                    this.edit_record['percentage']=this.marklist[vi]['percentage'];
+                    for(var i=0;i<this.marklist[vi]['sub'].length;i++)
+                    {
+                        this.edit_record['sub'][i]['marks']=this.marklist[vi]['sub'][i]['marks'];
+                    }
+                    this.edit_record['grade']=this.marklist[vi]['grade'];
+                    this.edit_save_ind=vi;
+               },
+               edit_save(vi)
+               {
+                    edit_pop=new bootstrap.Modal(document.getElementById('edit_student_record'));
+                    this.marklist.splice(this.edit_save_ind,1,JSON.parse(JSON.stringify(this.edit_record)) );
+                    this.edit_record={
+                    "roll_no":"",
+                    "name":"",
+                    "total":0,
+                    "percentage":0,
+                    "grade":"-",
+                    "sub":[{"subject":"Maths","marks":0},{"subject":"Physics","marks":0},{"subject":"Chemistry","marks":0},{"subject":"History","marks":0},{"subject":"Geography","marks":0},{"subject":"English","marks":0},{"subject":"Telugu","marks":0}]
+                   };
+                   edit_pop.hide();
+               },
+               validate_name(vi)
+               {
+                    if(vi==0)
+                    {
+                        if(this.add_record['name'].match(/^[a-z\ ]{3,50}$/i) == null)
+                        {
+                            this.name_style="border: 2px solid red;border-radius:2px; box-shadow: 5px 5px 10px 2px red;";
+                        }
+                        else{
+                            this.name_style="border: 1px solid black;border-radius:2px;";
+                        }
+                    }
+                    else if(vi==1)
+                    {
+                        if(this.edit_record['name'].match(/^[a-z\ ]{3,50}$/i) == null)
+                        {
+                            this.ep_name_style="border: 2px solid red;border-radius:2px; box-shadow: 5px 5px 10px 2px red;";
+                        }
+                        else{
+                            this.ep_name_style="border: 1px solid black;border-radius:2px;";
+                        }
+                    }
+                    //this.name_style="";
+                    
+               },
+               validate_roll(vi)
+               {
+                    if(vi==0)
+                    {
+                        if(this.add_record['roll_no'].match(/^20A31A05[A-J0-9][0-9]$/) == null)
+                        {
+                            this.roll_style="border: 2px solid red;border-radius:2px; box-shadow: 5px 5px 10px 2px red;";
+                            if(this.add_record['roll_no'].length>=10)
+                            {
+                                this.add_record['roll_no'].slice(0,9);
+                                alert("Roll Number consists of only 10 alphanumeric characters.")
+                            }
+                        }
+                        else{
+                            this.roll_style="border: 1px solid black;border-radius:2px;";
+                        }
+                    }
+                    else if(vi==1)
+                    {
+                        if(this.edit_record['roll_no'].match(/^20A31A05[A-J0-9][0-9]$/) == null)
+                        {
+                            this.ep_roll_style="border: 2px solid red;border-radius:2px; box-shadow: 5px 5px 10px 2px red;";
+                        }
+                        else{
+                            this.ep_roll_style="border: 1px solid black;border-radius:2px;";
+                        }
+                    }
+                   // this.roll_style="";
+
+               }    
+            }
+        }).mount("#app");
+    </script>
+</body>
+</html>

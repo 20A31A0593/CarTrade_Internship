@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Example</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="bootstrap-5.3.2-dist/css/bootstrap.min.css" >
+    <script src="bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div id="app" >
+<!--<div class="p-1"><button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#addbillpopup" >Add Bill</button></div>-->
+
+<div class="p-1"><button class="btn btn-primary"  v-on:click="show_add_form" >Add Bill</button></div>
+<table class="p-2 table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Amount</th>
+            <th>.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-for="bill,bi in bills" >
+            <td>{{ bi }}</td>
+            <td>{{ bill['customer'] }}</td>
+            <td>{{ bill['mobile'] }}</td>
+            <td>{{ bill['amount'] }}</td>
+            <td><button class="btn btn-outline-dark btn-sm" v-on:click="edit(bi)">edit</button></td>
+            <td><button class="btn btn-outline-dark btn-sm" type="button" @click="del_bill(bi)">x</button></td>
+        </tr>
+    </tbody>
+</table>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="addbillpopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Add Bill</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table>
+            <tr>
+                <td>Customer Name</td>
+                <td>Contact No</td>
+                <td>Amount</td>
+            </tr>
+            <tr>
+                <td><table><tr><input type="text" style="outline: none;" v-bind:style="name_style" v-model="add_record['customer']" v-on:keyup="validate_name" ><span v-if="name_valid">&check;</span><span v-if="name_valid==false">&#x292B;</span></tr>
+                    <br><tr>{{msg}}</tr></table>
+                </td>
+                
+                <td><input type="text" id="contact" style="outline:none;"  v-model="add_record['contact']" v-bind:style="contact_style" v-on:keyup="validate_contact" ><span v-if="valid_contact">&check;</span><span v-if="valid_contact==false">&#x292B;</span></td>
+                <td>{{ add_record['amount'] }}</td>
+            </tr>
+          </table>
+
+          <table class="table table-striped table-bordered table-hover table-sm">
+            <tr>
+                <td>#</td>
+                <td>Product</td>
+                <td>Price</td>
+                <td>Qty</td>
+                <td>Total</td>
+                <td>Tax</td>
+                <td>Net</td>
+                <td>.</td>
+            </tr>
+            <tr v-for="item,i in add_record['items']">
+                <td>{{ i+1 }}</td>
+                <td>
+                    <select class="form-select form-select-sm" v-model="item['product_id']" v-on:change="product_selected(i)" >
+                        <option v-for="p,pi in products" v-bind:value="pi" >{{ p['name'] }}</option>
+                    </select>
+                </td>
+                <td align="right">{{ item['price'] }}</td>
+                <td><input type="number" class="form-control form-control-sm" style="width:80px;" v-model="item['qty']" v-on:change="calc(i)" ></td>
+                <td align="right">{{ item['total'] }}</td>
+                <td align="right">{{ item['tax'] }}%</td>
+                <td align="right">{{ item['net'] }}</td>
+                <td><input type="button" value="X" v-on:click="del_prod(i)"></td>
+            </tr>
+          </table>
+          <div><input type="button" value="+" v-on:click="add_item" ></div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" v-on:click="save_bill">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Edit popup-->
+  <div class="modal fade" id="editbillpopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Bill</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table>
+            <tr>
+                <td>Customer Name</td>
+                <td>Contact No</td>
+                <td>Amount</td>
+            </tr>
+            <tr>
+                <td><table><tr><input type="text" va style="outline: none;" v-bind:style="name_style" v-model="edit_record['customer']" v-on:keyup="validate_name" ><span v-if="name_valid">&check;</span><span v-if="name_valid==false">&#x292B;</span></tr>
+                    <br><tr>{{msg}}</tr></table>
+                </td>
+                
+                <td><input type="text" id="contact" style="outline:none;"  v-model="edit_record['contact']" v-bind:style="contact_style" v-on:keyup="validate_contact" ><span v-if="valid_contact">&check;</span><span v-if="valid_contact==false">&#x292B;</span></td>
+                <td>{{ edit_record['amount'] }}</td>
+            </tr>
+          </table>
+
+          <table class="table table-striped table-bordered table-hover table-sm">
+            <tr>
+                <td>#</td>
+                <td>Product</td>
+                <td>Price</td>
+                <td>Qty</td>
+                <td>Total</td>
+                <td>Tax</td>
+                <td>Net</td>
+                <td>.</td>
+            </tr>
+            <tr v-for="item,i in edit_record['items']">
+                <td>{{ i+1 }}</td>
+                <td>
+                    <select class="form-select form-select-sm" v-model="item['product_id']" v-on:change="edit_product_selected(i)" >
+                        <option v-for="p,pi in products" v-bind:value="pi" >{{ p['name'] }}</option>
+                    </select>
+                </td>
+                <td align="right">{{ item['price'] }}</td>
+                <td><input type="number" class="form-control form-control-sm" style="width:80px;" v-model="item['qty']" v-on:change="edit_calc(i)" ></td>
+                <td align="right">{{ item['total'] }}</td>
+                <td align="right">{{ item['tax'] }}%</td>
+                <td align="right">{{ item['net'] }}</td>
+                <td><input type="button" value="X" v-on:click="del_edit_prod(i)"></td>
+            </tr>
+          </table>
+          <div><input type="button" value="+" v-on:click="edit_form_add_item" ></div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" v-on:click="save_edit_bill">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="vue.global.prod.js" ></script>
+<script>
+var app = Vue.createApp({
+    data(){
+        return {
+            name_style:"",
+            contact_style:"",
+            name_valid:false,
+            valid_contact:false,
+            msg:"",
+            products: [
+                {
+                    "name": "Samsung TV",
+                    "price": 45000,
+                },
+                {
+                    "name": "LG AirConditioner",
+                    "price": 35000,
+                },
+                {
+                    "name": "Google Pixel Phone",
+                    "price": 55000,
+                },
+                {
+                    "name": "Philips Kettle",
+                    "price": 350,
+                },
+                {
+                    "name": "Maharaja Grinder",
+                    "price": 600,
+                },
+                {
+                    "name": "Lenova Laptop",
+                    "price": 5000,
+                },
+                
+            ],
+            bills: [
+                
+            ],
+            add_record: {
+                "customer": "",
+                "contact": "",
+                "amount": 0,
+                "items": [
+                    {
+                        "product_id":-1,
+                        "price": 0,
+                        "qty":0,
+                        "total":0,
+                        "tax":0,
+                        "net":0,
+                    }
+                ]
+            },
+            edit_save_ind:-1,
+            edit_record: {
+                "customer": "",
+                "contact": "",
+                "amount": 0,
+                "items": [
+                    {
+                        "product_id":-1,
+                        "price": 0,
+                        "qty":0,
+                        "total":0,
+                        "tax":0,
+                        "net":0,
+                    }
+                ]
+            }
+        };
+    },
+    mounted(){
+        //this.show_add_form();
+    },
+    methods: {
+        add_item: function(){
+            this.add_record['items'].push({
+                "product_id":"",
+                "price": "",
+                "qty": 1,
+                "total": 0,
+                "tax": 0,
+                "net": 0
+            });
+        },
+        edit_form_add_item: function(){
+            this.edit_record['items'].push({
+                "product_id":"",
+                "price": "",
+                "qty": 1,
+                "total": 0,
+                "tax": 0,
+                "net": 0
+            });
+        },
+        product_selected: function(vi){
+            var p = this.products[ this.add_record['items'][vi]['product_id'] ]['price'];
+            this.add_record['items'][vi]['price'] = p;
+            this.calc(vi);
+        },
+        edit_product_selected: function(vi){
+            var p = this.products[ this.edit_record['items'][vi]['product_id'] ]['price'];
+            this.edit_record['items'][vi]['price'] = p;
+            this.calc(vi);
+        },
+        calc: function(vi){
+            this.add_record['items'][vi]['total'] = this.add_record['items'][vi]['price']*this.add_record['items'][vi]['qty'];
+            this.add_record['items'][vi]['tax'] = 18;
+            this.add_record['items'][vi]['net'] = this.add_record['items'][vi]['total'] + (this.add_record['items'][vi]['total']*this.add_record['items'][vi]['tax']/100);
+            this.calc_amount();
+        },
+        edit_calc: function(vi){
+            this.edit_record['items'][vi]['total'] = this.edit_record['items'][vi]['price']*this.edit_record['items'][vi]['qty'];
+            this.edit_record['items'][vi]['tax'] = 18;
+            this.edit_record['items'][vi]['net'] = this.edit_record['items'][vi]['total'] + (this.edit_record['items'][vi]['total']*this.edit_record['items'][vi]['tax']/100);
+            this.edit_calc_amount();
+        },
+        calc_amount: function(){
+            var n = 0;
+            for(var i=0;i<this.add_record['items'].length;i++){
+                n = n + this.add_record['items'][i]['net'];
+            }
+            this.add_record['amount'] = n;
+        },
+        edit_calc_amount: function(){
+            var n = 0;
+            for(var i=0;i<this.edit_record['items'].length;i++){
+                n = n + this.edit_record['items'][i]['net'];
+            }
+            this.edit_record['amount'] = n;
+        },
+        show_add_form: function(){
+            pop = new bootstrap.Modal(document.getElementById('addbillpopup') );
+            this.add_record['contact']=this.add_record['contact'].slice(0,9);
+            pop.show();
+        },
+        edit(vi)
+        {
+            this.edit_record['customer']=this.bills[vi]['customer'];
+            this.edit_record['contact']=this.bills[vi]['contact'];
+            this.edit_record['items'] = JSON.parse( JSON.stringify( this.bills[vi]['items'] ) );
+            edit_pop = new bootstrap.Modal(document.getElementById('editbillpopup') );
+            edit_pop.show();
+            this.edit_save_ind = vi;
+
+        },
+        save_edit_bill(){
+            this.bills.splice(this.edit_save_ind,1,JSON.parse(JSON.stringify(this.edit_record)) );
+            this.edit_record = {
+                "customer": "",
+                "contact": "",
+                "amount": 0,
+                "items": [
+                    {
+                        "product_id":-1,
+                        "price": 0,
+                        "qty":0,
+                        "total":0,
+                        "tax":0,
+                        "net":0,
+                    }
+                ]
+            };
+            //pop = new bootstrap.Modal(document.getElementById('addbillpopup') );
+            edit_pop.hide();
+
+        },
+        save_bill: function(){
+            this.bills.push( JSON.parse(JSON.stringify(this.add_record)) );
+            this.add_record = {
+                "customer": "",
+                "contact": "",
+                "amount": 0,
+                "items": [
+                    {
+                        "product_id":-1,
+                        "price": 0,
+                        "qty":0,
+                        "total":0,
+                        "tax":0,
+                        "net":0,
+                    }
+                ]
+            };
+            //pop = new bootstrap.Modal(document.getElementById('addbillpopup') );
+            pop.hide();
+        },
+        validate_name:function()
+        {
+            if( this.add_record['customer'].match(/^[a-z\ ]{3,50}$/i) == null ){
+				this.name_style = "border:1.5px solid red;  border-radius:2px;";
+				this.name_valid = false;
+				this.msg = "Please enter name in alphabates only. no special chars allowed.";
+			}
+			else{
+				this.name_valid = true;
+				this.name_style = "border:1.5px solid black;  border-radius:2px;";
+                this.msg = "";
+			}
+        },
+        validate_contact()
+        {
+            if( this.add_record['contact'].match(/^[6-9][0-9]{9}$/) == null || this.add_record['contact'].length>10){
+				this.contact_style = "border:1.5px solid red;  border-radius:2px;";
+				this.valid_contact = false;
+				this.msg = "";
+                
+			}
+			else{
+				this.valid_contact = true;
+				this.contact_style= "border:1.5px solid black;  border-radius:2px;";
+                this.msg = "";
+			}
+        },
+        del_prod(ind)
+        {
+            this.add_record['items'].splice(ind,1);
+        },
+        del_edit_prod(ind){
+            this.edit_record['items'].splice(ind,1);
+        },
+        del_bill(ind)
+        {
+            this.bills.splice(ind,1);
+        }
+    }
+}).mount("#app");
+</script>
+
+</body>
+</html>

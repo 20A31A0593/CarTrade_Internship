@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        
+        #edit_data, #add_rec{
+            
+            height:auto;
+            width:350px;
+            border:1px solid black;
+            border-radius: 5px;
+        }
+        #edit_head,#add_head{
+            align-content: center;
+            
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="app">
+        <table id="table_data" border="2" class="table table-success table-striped">
+            <thead>
+                <tr>
+                    
+                    <td><b>Roll Number</b></td>
+                    <td><b>Student Name</b></td>
+                    <td><b>Branch</b></td>
+                    <td><b>Year</b></td>
+                    <td><b>Edit</b></td>
+                    <td><b>Delete</b></td>
+                
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(x,ind) in book_data">
+                    <td>{{ book_data[ind]["bookid"] }}</td>
+                    <td>{{ book_data[ind]["bookname"] }}</td>
+                    <td>{{ book_data[ind]["author"] }}</td>
+                    <td>{{ book_data[ind]["publisher"] }}</td>
+                    <td><input type="button" value="Edit" v-on:click="edit(ind)" style="background-color:cornflowerblue;"/></td>
+                    <td><input type="button" value="X" v-on:click="deleterec(ind)" style="background-color:red;"/></td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <div id="edit_data" v-if="edit_data_pop" style="background-color:rgb(190, 225, 223);">
+            <p id="edit_head"><b>Edit Data</b>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<input type="button" value="X" v-on:click="closeeditpop" style="background-color:indianred;"/></p>
+
+            <hr>
+            <label>Enter Book Id : </label>
+            <input type="text" placeholder="Enter book id" v-model="edit_id" id="edit_book_id" />
+            <br>
+            <label>Enter Book Name : </label>
+            <input type="text" placeholder="Enter book name" v-model="edit_name" id="edit_book_name" />
+            <br>
+            <label>Enter Author : </label>
+            <input type="text" placeholder="Enter author" v-model="edit_author" id="edit_author" />
+            <br>
+            <label>Enter Publisher : </label>
+            <input type="text" placeholder="Enter publisher" v-model="edit_publisher" id="edit_publisher" />
+            <br>
+            <input type="button" value="save changes" v-on:click="edit_save" style="background-color:rgb(218, 214, 241);"/>
+        </div>
+        <br>
+        <label>Do you want to add one more record : <input type="button" value="Click me to Add Record" v-on:click="add_record" style="background-color:lightcyan;"/></label>
+        <br>
+        <br>
+        <div id="add_rec" v-if="add_data_pop" style="background-color:rgb(190, 225, 223);">
+            <p id="add_head"><b>Add Data</b>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<input type="button" value="X" v-on:click="closeaddpop" style="background-color:indianred;"/></p>
+
+            <hr style="color: solid black;">
+            <label>Enter Book Id : </label>
+            <input type="text" placeholder="Enter book id" v-model="id" id="add_book_id" />
+            <br>
+            <label>Enter Book Name : </label>
+            <input type="text" placeholder="Enter book name" v-model="name" id="add_book_name" />
+            <br>
+            <label>Enter Author : </label>
+            <input type="text" placeholder="Enter author" v-model="author" id="add_author" />
+            <br>
+            <label>Enter Publisher : </label>
+            <input type="text" placeholder="Enter publisher" v-model="publisher" id="add_publisher" />
+            <br>
+            <br>
+            <input type="button" value="Add To Record" v-on:click="add_changes" style="background-color:rgb(218, 214, 241);"/>
+        </div>
+
+
+    </div>
+    <script>
+        const app = Vue.createApp({
+            data: function(){
+                return{
+                    book_data: [{
+                        "bookid": 1,
+                        "bookname": "Introduction to Computer",
+                        "author": "Amit Gard",
+                        "publisher": "Reader's Zone"
+                    },
+                    {
+                        "bookid": 2,
+                        "bookname": "Client Server Computing",
+                        "author": "Lalit Kumar",
+                        "publisher": "Sun India Publications"
+                    },
+                    {
+                        "bookid": 3,
+                        "bookname": "Data Structures Using C",
+                        "author": "Sharad Kumar",
+                        "publisher": "Thankur Publications"
+                    }],
+                    index:null,
+                    id:"",
+                    name:"",
+                    author: "",
+                    publisher: "",
+                    edit_id:"",
+                    edit_name:"",
+                    edit_author: "",
+                    edit_publisher: "",
+                    edit_data_pop: false,
+                    add_data_pop: false,
+                    
+                }
+            },
+            methods:{
+                edit: function(ind){
+                    this.index=ind;
+                    this.edit_data_pop = true;
+                    this.edit_id=this.book_data[ind]["bookid"];
+                    this.edit_name=this.book_data[ind]["bookname"];
+                    this.edit_author=this.book_data[ind]["author"];
+                    this.edit_publisher=this.book_data[ind]["publisher"];
+                },
+                edit_save: function(){
+                    
+                    this.book_data[this.index]["bookid"]=this.edit_id;
+                    this.book_data[this.index]["bookname"]=this.edit_name;
+                    this.book_data[this.index]["author"]=this.edit_author;
+                    this.book_data[this.index]["publisher"]=this.edit_publisher;
+                    this.edit_data_pop = false;
+                },
+                closeeditpop: function(){
+                    this.edit_data_pop = false ;
+                },
+                deleterec: function(ind){
+                    this.book_data.splice(ind,1);
+                },
+                add_record: function(){
+                    this.add_data_pop = true;
+                    
+                    
+                },
+                add_changes: function(){
+                    this.add_data_pop = false;
+                    
+                    this.book_data.push({
+                        "bookid": this.id,
+                        "bookname": this.name,
+                        "author": this.author,
+                        "publisher": this.publisher});
+                },
+                closeaddpop: function(){
+                    this.add_data_pop = false;
+                }
+
+                
+            }
+        }).mount("#app");
+    </script>
+    
+</body>
+</html>
